@@ -4,7 +4,7 @@ import tradexLogo from "@/assets/clients/tradex.png";
 import masterLogo from "@/assets/clients/master.png";
 import mindbaseLogo from "@/assets/clients/mindbase.png";
 import bennyLogo from "@/assets/clients/benny.jpg";
-import elevenlabsLogo from "@/assets/clients/elevenlabs.svg";
+import elevenlabsLogo from "@/assets/clients/elevenlabs.png";
 import ycMark from "@/assets/yc-mark.svg";
 import trivonMark from "@/assets/trivon-mark.jpg";
 
