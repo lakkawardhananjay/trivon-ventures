@@ -1,5 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import tradexLogo from "@/assets/clients/tradex.png";
+import masterLogo from "@/assets/clients/master.png";
+import mindbaseLogo from "@/assets/clients/mindbase.png";
+import bennyLogo from "@/assets/clients/benny.jpg";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -13,7 +17,12 @@ const NAV = [
   { label: "Contact", href: "#contact" },
 ];
 
-const CLIENTS = ["TradeXMarkets", "Master", "Mindbase", "Benny", "ElevenLabs", "Keventers"];
+const CLIENTS: { name: string; src: string }[] = [
+  { name: "TradeX Markets", src: tradexLogo },
+  { name: "Master", src: masterLogo },
+  { name: "Mindbase", src: mindbaseLogo },
+  { name: "Benny", src: bennyLogo },
+];
 
 const STEPS = [
   { n: "01", t: "Identify", d: "Map the right creators whose audience overlaps with your ideal user." },
@@ -230,7 +239,7 @@ function Network() {
 }
 
 function Clients() {
-  const row = [...CLIENTS, ...CLIENTS];
+  const row = [...CLIENTS, ...CLIENTS, ...CLIENTS];
   return (
     <section id="clients" className="border-t border-border bg-secondary/40 py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
@@ -248,13 +257,18 @@ function Clients() {
           aria-hidden
           className="pointer-events-none absolute inset-y-0 right-0 z-10 w-32 bg-gradient-to-l from-secondary/80 to-transparent"
         />
-        <div className="marquee flex w-max gap-16 whitespace-nowrap px-6">
+        <div className="marquee flex w-max items-center gap-20 whitespace-nowrap px-6">
           {row.map((c, i) => (
             <div
-              key={`${c}-${i}`}
-              className="flex h-20 items-center text-3xl font-semibold tracking-tight text-foreground/80 transition-colors hover:text-foreground sm:text-4xl"
+              key={`${c.name}-${i}`}
+              className="flex h-20 shrink-0 items-center"
             >
-              {c}
+              <img
+                src={c.src}
+                alt={c.name}
+                loading="lazy"
+                className="h-12 w-auto object-contain opacity-80 transition-opacity duration-300 hover:opacity-100 sm:h-14"
+              />
             </div>
           ))}
         </div>
@@ -315,7 +329,7 @@ function Contact() {
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-background/60" />
             Trivon Ventures © {new Date().getFullYear()}
           </div>
-          <div>Creator-led user adoption · Bengaluru / Mumbai / Delhi</div>
+          <div>Creator-led user adoption</div>
         </div>
       </div>
     </section>
