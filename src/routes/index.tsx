@@ -4,6 +4,7 @@ import tradexLogo from "@/assets/clients/tradex.png";
 import masterLogo from "@/assets/clients/master.png";
 import mindbaseLogo from "@/assets/clients/mindbase.png";
 import bennyLogo from "@/assets/clients/benny.jpg";
+import trivonMark from "@/assets/trivon-mark.jpg";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -52,8 +53,8 @@ function Nav() {
       }`}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-10">
-        <a href="#top" className="flex items-center gap-2 text-sm font-semibold tracking-tight">
-          <span className="inline-block h-2 w-2 rounded-full bg-foreground" />
+        <a href="#top" className="flex items-center gap-2.5 text-sm font-semibold tracking-tight">
+          <img src={trivonMark} alt="Trivon Ventures" className="h-6 w-6 rounded-sm object-cover" />
           Trivon<span className="text-muted-foreground font-normal">Ventures</span>
         </a>
         <nav className="hidden items-center gap-8 md:flex">
@@ -267,7 +268,7 @@ function Clients() {
                 src={c.src}
                 alt={c.name}
                 loading="lazy"
-                className="h-12 w-auto object-contain opacity-80 transition-opacity duration-300 hover:opacity-100 sm:h-14"
+                className="h-20 w-auto object-contain opacity-80 transition-opacity duration-300 hover:opacity-100 sm:h-24 lg:h-28"
               />
             </div>
           ))}
