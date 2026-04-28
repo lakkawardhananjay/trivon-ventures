@@ -359,10 +359,10 @@ function Index() {
     <main className="bg-background text-foreground">
       <Nav />
       <Hero />
+      <Clients />
       <WhatWeDo />
       <Process />
       <Network />
-      <Clients />
       <Why />
       <Contact />
     </main>
