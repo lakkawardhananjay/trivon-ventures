@@ -32,11 +32,15 @@ export const Route = createRootRoute({
       { title: "Trivon Ventures — Creator-led user adoption for tech products" },
       { name: "description", content: "Trivon Ventures partners with India's top tech voices to drive real user adoption for ambitious tech products." },
       { name: "author", content: "Trivon Ventures" },
-      { property: "og:title", content: "Trivon Ventures — Creator-led user adoption" },
-      { property: "og:description", content: "We help tech products get adopted through India's most credible creators." },
+      { property: "og:title", content: "Trivon Ventures — Creator-led user adoption for tech products" },
+      { property: "og:description", content: "Trivon Ventures partners with India's top tech voices to drive real user adoption for ambitious tech products." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@trivonventures" },
+      { name: "twitter:title", content: "Trivon Ventures — Creator-led user adoption for tech products" },
+      { name: "twitter:description", content: "Trivon Ventures partners with India's top tech voices to drive real user adoption for ambitious tech products." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/gzkiSTeunAXjHXGU5ahMtxdqNbJ3/social-images/social-1777366347258-Trivon_Logo.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/gzkiSTeunAXjHXGU5ahMtxdqNbJ3/social-images/social-1777366347258-Trivon_Logo.webp" },
     ],
     links: [
       {
