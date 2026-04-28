@@ -4,6 +4,8 @@ import tradexLogo from "@/assets/clients/tradex.png";
 import masterLogo from "@/assets/clients/master.png";
 import mindbaseLogo from "@/assets/clients/mindbase.png";
 import bennyLogo from "@/assets/clients/benny.jpg";
+import elevenlabsLogo from "@/assets/clients/elevenlabs.svg";
+import ycMark from "@/assets/yc-mark.svg";
 import trivonMark from "@/assets/trivon-mark.jpg";
 
 export const Route = createFileRoute("/")({
@@ -18,11 +20,12 @@ const NAV = [
   { label: "Contact", href: "#contact" },
 ];
 
-const CLIENTS: { name: string; src: string }[] = [
-  { name: "TradeX Markets", src: tradexLogo },
-  { name: "Master", src: masterLogo },
-  { name: "Mindbase", src: mindbaseLogo },
-  { name: "Benny", src: bennyLogo },
+const CLIENTS: { name: string; src: string; ycBacked?: boolean; bg?: string }[] = [
+  { name: "TradeX Markets", src: tradexLogo, ycBacked: true, bg: "bg-white" },
+  { name: "Master", src: masterLogo, bg: "bg-[#1bf2a4]" },
+  { name: "Mindbase", src: mindbaseLogo, ycBacked: true, bg: "bg-black" },
+  { name: "Benny", src: bennyLogo, bg: "bg-[#1ea7ff]" },
+  { name: "ElevenLabs", src: elevenlabsLogo, bg: "bg-white" },
 ];
 
 const STEPS = [
@@ -258,18 +261,32 @@ function Clients() {
           aria-hidden
           className="pointer-events-none absolute inset-y-0 right-0 z-10 w-32 bg-gradient-to-l from-secondary/80 to-transparent"
         />
-        <div className="marquee flex w-max items-center gap-20 whitespace-nowrap px-6">
+        <div className="marquee flex w-max items-start gap-12 whitespace-nowrap px-6 sm:gap-16">
           {row.map((c, i) => (
             <div
               key={`${c.name}-${i}`}
-              className="flex h-20 shrink-0 items-center"
+              className="flex shrink-0 flex-col items-center gap-3"
             >
-              <img
-                src={c.src}
-                alt={c.name}
-                loading="lazy"
-                className="h-20 w-auto object-contain opacity-80 transition-opacity duration-300 hover:opacity-100 sm:h-24 lg:h-28"
-              />
+              <div
+                className={`flex h-28 w-44 items-center justify-center overflow-hidden rounded-2xl border border-border ${c.bg ?? "bg-background"} sm:h-32 sm:w-52`}
+              >
+                <img
+                  src={c.src}
+                  alt={c.name}
+                  loading="lazy"
+                  className="max-h-[70%] max-w-[80%] object-contain"
+                />
+              </div>
+              <div className="flex h-5 items-center gap-1.5">
+                {c.ycBacked && (
+                  <>
+                    <img src={ycMark} alt="" className="h-4 w-4" />
+                    <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                      Backed by Y Combinator
+                    </span>
+                  </>
+                )}
+              </div>
             </div>
           ))}
         </div>
