@@ -49,7 +49,16 @@ function Typewriter({ text }: { text: string }) {
   const [count, setCount] = useState(0);
   useEffect(() => {
     if (count >= text.length) return;
-    const id = window.setTimeout(() => setCount((c) => c + 1), count === 0 ? 250 : 28);
+    const ch = text[count];
+    const prev = text[count - 1];
+    let delay = 55;
+    if (count === 0) delay = 400;
+    else if (prev === "." || prev === "!" || prev === "?") delay = 320;
+    else if (prev === "," || prev === ";" || prev === ":") delay = 180;
+    else if (ch === " ") delay = 35;
+    // tiny natural jitter
+    delay += Math.random() * 30 - 10;
+    const id = window.setTimeout(() => setCount((c) => c + 1), delay);
     return () => window.clearTimeout(id);
   }, [count, text]);
   const done = count >= text.length;
@@ -58,7 +67,7 @@ function Typewriter({ text }: { text: string }) {
       <span aria-hidden>{text.slice(0, count)}</span>
       <span
         aria-hidden
-        className={`ml-1 inline-block h-[0.85em] w-[0.06em] -mb-[0.05em] bg-foreground align-baseline ${done ? "blink" : ""}`}
+        className={`ml-1 inline-block h-[0.85em] w-[0.06em] -mb-[0.05em] bg-foreground align-baseline caret-soft ${done ? "blink" : ""}`}
       />
     </span>
   );
