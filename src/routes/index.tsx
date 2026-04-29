@@ -42,6 +42,29 @@ const WHY = [
 ];
 
 function Nav() {
+  return _Nav();
+}
+
+function Typewriter({ text }: { text: string }) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (count >= text.length) return;
+    const id = window.setTimeout(() => setCount((c) => c + 1), count === 0 ? 250 : 28);
+    return () => window.clearTimeout(id);
+  }, [count, text]);
+  const done = count >= text.length;
+  return (
+    <span aria-label={text}>
+      <span aria-hidden>{text.slice(0, count)}</span>
+      <span
+        aria-hidden
+        className={`ml-1 inline-block h-[0.85em] w-[0.06em] -mb-[0.05em] bg-foreground align-baseline ${done ? "blink" : ""}`}
+      />
+    </span>
+  );
+}
+
+function _Nav() {
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
