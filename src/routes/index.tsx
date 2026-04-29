@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import tradexLogo from "@/assets/clients/tradex.png";
 import masterLogo from "@/assets/clients/master.png";
 import mindbaseLogo from "@/assets/clients/mindbase.png";
@@ -46,28 +46,53 @@ function Nav() {
 }
 
 function Typewriter({ text }: { text: string }) {
-  const [count, setCount] = useState(0);
+  const words = useMemo(() => text.split(/(\s+)/), [text]);
+  // schedule per word with extra dwell after punctuation
+  const schedule = useMemo(() => {
+    const base = 220;
+    const stagger = 90;
+    const punctPause = 220;
+    let t = base;
+    return words.map((w) => {
+      const delay = t;
+      const trimmed = w.trim();
+      if (!trimmed) {
+        t += 20;
+      } else {
+        t += stagger;
+        const last = trimmed[trimmed.length - 1];
+        if (last === "." || last === "!" || last === "?") t += punctPause;
+        else if (last === "," || last === ";" || last === ":") t += punctPause * 0.55;
+      }
+      return delay;
+    });
+  }, [words]);
+  const totalMs = schedule.length ? schedule[schedule.length - 1] + 420 : 0;
+  const [done, setDone] = useState(false);
   useEffect(() => {
-    if (count >= text.length) return;
-    const ch = text[count];
-    const prev = text[count - 1];
-    let delay = 55;
-    if (count === 0) delay = 400;
-    else if (prev === "." || prev === "!" || prev === "?") delay = 320;
-    else if (prev === "," || prev === ";" || prev === ":") delay = 180;
-    else if (ch === " ") delay = 35;
-    // tiny natural jitter
-    delay += Math.random() * 30 - 10;
-    const id = window.setTimeout(() => setCount((c) => c + 1), delay);
+    const id = window.setTimeout(() => setDone(true), totalMs + 600);
     return () => window.clearTimeout(id);
-  }, [count, text]);
-  const done = count >= text.length;
+  }, [totalMs]);
   return (
-    <span aria-label={text}>
-      <span aria-hidden>{text.slice(0, count)}</span>
+    <span aria-label={text} className="inline">
+      <span aria-hidden className="motion-reduce:contents">
+        {words.map((w, i) =>
+          /^\s+$/.test(w) ? (
+            <span key={i}>{w}</span>
+          ) : (
+            <span
+              key={i}
+              className="inline-block opacity-0 will-change-[transform,opacity] tw-word motion-reduce:opacity-100 motion-reduce:animate-none"
+              style={{ animationDelay: `${schedule[i]}ms` }}
+            >
+              {w}
+            </span>
+          ),
+        )}
+      </span>
       <span
         aria-hidden
-        className={`ml-1 inline-block h-[0.85em] w-[0.06em] -mb-[0.05em] bg-foreground align-baseline caret-soft ${done ? "blink" : ""}`}
+        className={`caret-smooth ml-2 inline-block h-[0.78em] w-[2px] translate-y-[0.06em] rounded-[1px] bg-current align-baseline opacity-70 transition-opacity duration-500 ${done ? "opacity-0" : ""}`}
       />
     </span>
   );
@@ -117,7 +142,7 @@ function _Nav() {
 
 function Hero() {
   return (
-    <section id="top" className="relative overflow-hidden pt-40 pb-32 lg:pt-56 lg:pb-44">
+    <section id="top" className="relative overflow-hidden pt-32 pb-20 lg:pt-44 lg:pb-28">
       <div
         aria-hidden
         className="absolute inset-0 -z-10 grain"
@@ -126,7 +151,7 @@ function Hero() {
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[600px] bg-[radial-gradient(ellipse_at_top,oklch(0.96_0_0),transparent_60%)]"
       />
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+      <div className="mx-auto max-w-6xl px-6 lg:px-10">
         <div className="reveal mb-8 inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-xs text-muted-foreground">
           <span className="relative flex h-1.5 w-1.5">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-foreground opacity-60" />
@@ -134,14 +159,14 @@ function Hero() {
           </span>
           Creator-led user adoption
         </div>
-        <h1 className="reveal reveal-delay-1 max-w-5xl text-balance text-5xl font-semibold leading-[1.02] tracking-[-0.04em] sm:text-6xl lg:text-8xl">
+        <h1 className="reveal reveal-delay-1 max-w-4xl text-balance text-4xl font-semibold leading-[1.05] tracking-[-0.035em] sm:text-5xl lg:text-7xl">
           <Typewriter text="Driving user adoption for the world's most ambitious tech products." />
         </h1>
-        <p className="reveal reveal-delay-2 mt-8 max-w-2xl text-lg text-muted-foreground sm:text-xl">
+        <p className="reveal reveal-delay-2 mt-6 max-w-xl text-base text-muted-foreground sm:text-lg">
           We partner with India's top tech voices to turn product launches into real, measurable
           adoption — not impressions.
         </p>
-        <div className="reveal reveal-delay-3 mt-12 flex flex-wrap items-center gap-4">
+        <div className="reveal reveal-delay-3 mt-10 flex flex-wrap items-center gap-4">
           <a
             href="#contact"
             className="group inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-transform hover:scale-[1.02]"
@@ -157,15 +182,15 @@ function Hero() {
           </a>
         </div>
 
-        <div className="reveal reveal-delay-4 mt-24 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-4">
+        <div className="reveal reveal-delay-4 mt-16 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-4">
           {[
             ["50M+", "Verified reach"],
             ["120+", "Tech creators"],
             ["6×", "Median adoption lift"],
             ["100%", "Tech-only focus"],
           ].map(([k, v]) => (
-            <div key={v} className="bg-background p-6">
-              <div className="text-2xl font-semibold tracking-tight sm:text-3xl">{k}</div>
+            <div key={v} className="bg-background p-5">
+              <div className="text-xl font-semibold tracking-tight sm:text-2xl">{k}</div>
               <div className="mt-1 text-xs uppercase tracking-widest text-muted-foreground">{v}</div>
             </div>
           ))}
@@ -186,14 +211,14 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 function WhatWeDo() {
   return (
-    <section id="what" className="border-t border-border py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+    <section id="what" className="border-t border-border py-20 lg:py-24">
+      <div className="mx-auto max-w-6xl px-6 lg:px-10">
         <SectionLabel>What we do</SectionLabel>
-        <div className="grid gap-16 lg:grid-cols-12">
-          <h2 className="text-balance text-4xl font-semibold tracking-[-0.03em] sm:text-5xl lg:col-span-7 lg:text-6xl">
+        <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
+          <h2 className="text-balance text-3xl font-semibold tracking-[-0.03em] sm:text-4xl lg:col-span-7 lg:text-5xl">
             We help tech companies grow through creators the market already trusts.
           </h2>
-          <div className="space-y-6 text-lg text-muted-foreground lg:col-span-5">
+          <div className="space-y-5 text-base text-muted-foreground lg:col-span-5 lg:text-lg">
             <p>
               Trivon is built for tech products that need credibility — not coverage. We work with a
               tight network of India's most authoritative tech creators to introduce your product to
@@ -211,13 +236,13 @@ function WhatWeDo() {
 
 function Process() {
   return (
-    <section id="process" className="border-t border-border bg-secondary/40 py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+    <section id="process" className="border-t border-border bg-secondary/40 py-20 lg:py-24">
+      <div className="mx-auto max-w-6xl px-6 lg:px-10">
         <SectionLabel>How we work</SectionLabel>
-        <h2 className="max-w-3xl text-balance text-4xl font-semibold tracking-[-0.03em] sm:text-5xl">
+        <h2 className="max-w-3xl text-balance text-3xl font-semibold tracking-[-0.03em] sm:text-4xl lg:text-5xl">
           A four-step system, engineered for adoption.
         </h2>
-        <div className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((s) => (
             <div
               key={s.n}
@@ -239,15 +264,15 @@ function Process() {
 
 function Network() {
   return (
-    <section id="network" className="border-t border-border py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+    <section id="network" className="border-t border-border py-20 lg:py-24">
+      <div className="mx-auto max-w-6xl px-6 lg:px-10">
         <SectionLabel>Network</SectionLabel>
-        <div className="grid gap-16 lg:grid-cols-12">
+        <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
           <div className="lg:col-span-7">
-            <h2 className="text-balance text-4xl font-semibold tracking-[-0.03em] sm:text-5xl lg:text-6xl">
+            <h2 className="text-balance text-3xl font-semibold tracking-[-0.03em] sm:text-4xl lg:text-5xl">
               India's leading tech voices, working in concert.
             </h2>
-            <p className="mt-8 max-w-xl text-lg text-muted-foreground">
+            <p className="mt-6 max-w-xl text-base text-muted-foreground lg:text-lg">
               A curated network of founders, engineers, analysts and operators whose audiences
               actually build, buy and ship technology.
             </p>
@@ -277,14 +302,14 @@ function Network() {
 function Clients() {
   const row = [...CLIENTS, ...CLIENTS, ...CLIENTS];
   return (
-    <section id="clients" className="border-t border-border bg-secondary/40 py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+    <section id="clients" className="border-t border-border bg-secondary/40 py-20 lg:py-24">
+      <div className="mx-auto max-w-6xl px-6 lg:px-10">
         <SectionLabel>Trusted by</SectionLabel>
-        <h2 className="max-w-3xl text-balance text-4xl font-semibold tracking-[-0.03em] sm:text-5xl">
+        <h2 className="max-w-3xl text-balance text-3xl font-semibold tracking-[-0.03em] sm:text-4xl lg:text-5xl">
           Selected partners.
         </h2>
       </div>
-      <div className="relative mt-16 overflow-hidden">
+      <div className="relative mt-12 overflow-hidden">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-y-0 left-0 z-10 w-32 bg-gradient-to-r from-secondary/80 to-transparent"
@@ -329,13 +354,13 @@ function Clients() {
 
 function Why() {
   return (
-    <section className="border-t border-border py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10">
+    <section className="border-t border-border py-20 lg:py-24">
+      <div className="mx-auto max-w-6xl px-6 lg:px-10">
         <SectionLabel>Why Trivon</SectionLabel>
-        <h2 className="max-w-3xl text-balance text-4xl font-semibold tracking-[-0.03em] sm:text-5xl">
+        <h2 className="max-w-3xl text-balance text-3xl font-semibold tracking-[-0.03em] sm:text-4xl lg:text-5xl">
           Built differently. On purpose.
         </h2>
-        <div className="mt-16 grid gap-12 md:grid-cols-3">
+        <div className="mt-12 grid gap-10 md:grid-cols-3 lg:gap-12">
           {WHY.map((w, i) => (
             <div key={w.t} className="border-t border-foreground pt-6">
               <div className="font-mono text-xs text-muted-foreground">0{i + 1}</div>
@@ -352,18 +377,18 @@ function Why() {
 function Contact() {
   return (
     <section id="contact" className="border-t border-border bg-foreground text-background">
-      <div className="mx-auto max-w-7xl px-6 py-32 lg:px-10 lg:py-44">
+      <div className="mx-auto max-w-6xl px-6 py-24 lg:px-10 lg:py-32">
         <div className="flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-background/60">
           <span className="h-px w-8 bg-background/30" />
           Contact
         </div>
-        <h2 className="mt-6 max-w-4xl text-balance text-5xl font-semibold tracking-[-0.04em] sm:text-6xl lg:text-7xl">
+        <h2 className="mt-6 max-w-4xl text-balance text-4xl font-semibold tracking-[-0.035em] sm:text-5xl lg:text-6xl">
           Start a conversation<span className="blink">_</span>
         </h2>
-        <p className="mt-6 max-w-xl text-lg text-background/60">
+        <p className="mt-5 max-w-xl text-base text-background/60 lg:text-lg">
           Tell us what you're building. We'll tell you how creators can move the needle on adoption.
         </p>
-        <div className="mt-12 flex flex-wrap items-center gap-6">
+        <div className="mt-10 flex flex-wrap items-center gap-6">
           <a
             href="mailto:vedanshu@trivonventures.com"
             className="group inline-flex items-center gap-3 rounded-full bg-background px-6 py-4 text-sm font-medium text-foreground transition-transform hover:scale-[1.02]"
@@ -374,7 +399,7 @@ function Contact() {
         </div>
       </div>
       <div className="border-t border-background/10">
-        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-4 px-6 py-8 text-xs text-background/50 sm:flex-row sm:items-center lg:px-10">
+        <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-4 px-6 py-8 text-xs text-background/50 sm:flex-row sm:items-center lg:px-10">
           <div className="flex items-center gap-2">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-background/60" />
             Trivon Ventures © {new Date().getFullYear()}
