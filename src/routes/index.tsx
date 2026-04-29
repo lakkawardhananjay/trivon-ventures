@@ -112,7 +112,7 @@ function _Nav() {
         scrolled ? "border-b border-border bg-background/80 backdrop-blur-xl" : "bg-transparent"
       }`}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-10">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6 lg:px-10">
         <a href="#top" className="flex items-center gap-2.5 text-sm font-semibold tracking-tight">
           <img src={trivonMark} alt="Trivon Ventures" className="h-6 w-6 rounded-sm object-cover" />
           Trivon<span className="text-muted-foreground font-normal">Ventures</span>
