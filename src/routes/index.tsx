@@ -21,11 +21,11 @@ const NAV = [
 ];
 
 const CLIENTS: { name: string; src: string; ycBacked?: boolean; bg?: string }[] = [
+  { name: "ElevenLabs", src: elevenlabsLogo, bg: "bg-white" },
   { name: "TradeX Markets", src: tradexLogo, ycBacked: true, bg: "bg-white" },
   { name: "Master", src: masterLogo, bg: "bg-[#1bf2a4]" },
   { name: "Mindbase", src: mindbaseLogo, ycBacked: true, bg: "bg-black" },
   { name: "Benny", src: bennyLogo, bg: "bg-[#1ea7ff]" },
-  { name: "ElevenLabs", src: elevenlabsLogo, bg: "bg-white" },
 ];
 
 const STEPS = [
@@ -42,6 +42,29 @@ const WHY = [
 ];
 
 function Nav() {
+  return _Nav();
+}
+
+function Typewriter({ text }: { text: string }) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (count >= text.length) return;
+    const id = window.setTimeout(() => setCount((c) => c + 1), count === 0 ? 250 : 28);
+    return () => window.clearTimeout(id);
+  }, [count, text]);
+  const done = count >= text.length;
+  return (
+    <span aria-label={text}>
+      <span aria-hidden>{text.slice(0, count)}</span>
+      <span
+        aria-hidden
+        className={`ml-1 inline-block h-[0.85em] w-[0.06em] -mb-[0.05em] bg-foreground align-baseline ${done ? "blink" : ""}`}
+      />
+    </span>
+  );
+}
+
+function _Nav() {
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -103,7 +126,7 @@ function Hero() {
           Creator-led user adoption
         </div>
         <h1 className="reveal reveal-delay-1 max-w-5xl text-balance text-5xl font-semibold leading-[1.02] tracking-[-0.04em] sm:text-6xl lg:text-8xl">
-          Driving user adoption for the world's most ambitious tech products.
+          <Typewriter text="Driving user adoption for the world's most ambitious tech products." />
         </h1>
         <p className="reveal reveal-delay-2 mt-8 max-w-2xl text-lg text-muted-foreground sm:text-xl">
           We partner with India's top tech voices to turn product launches into real, measurable
