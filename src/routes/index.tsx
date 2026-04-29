@@ -46,54 +46,48 @@ function Nav() {
 }
 
 function Typewriter({ text }: { text: string }) {
-  const words = useMemo(() => text.split(/(\s+)/), [text]);
-  // schedule per word with extra dwell after punctuation
-  const schedule = useMemo(() => {
-    const base = 220;
-    const stagger = 90;
-    const punctPause = 220;
-    let t = base;
-    return words.map((w) => {
-      const delay = t;
-      const trimmed = w.trim();
-      if (!trimmed) {
-        t += 20;
-      } else {
-        t += stagger;
-        const last = trimmed[trimmed.length - 1];
-        if (last === "." || last === "!" || last === "?") t += punctPause;
-        else if (last === "," || last === ";" || last === ":") t += punctPause * 0.55;
-      }
-      return delay;
-    });
-  }, [words]);
-  const totalMs = schedule.length ? schedule[schedule.length - 1] + 420 : 0;
-  const [done, setDone] = useState(false);
+  const reduced = useMemo(
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
+    [],
+  );
+  const [count, setCount] = useState(reduced ? text.length : 0);
   useEffect(() => {
-    const id = window.setTimeout(() => setDone(true), totalMs + 600);
-    return () => window.clearTimeout(id);
-  }, [totalMs]);
+    if (reduced) return;
+    let i = 0;
+    let cancelled = false;
+    const tick = () => {
+      if (cancelled) return;
+      i += 1;
+      setCount(i);
+      if (i >= text.length) return;
+      const ch = text[i - 1];
+      let delay = 42;
+      if (ch === "." || ch === "!" || ch === "?") delay = 380;
+      else if (ch === "," || ch === ";" || ch === ":") delay = 220;
+      else if (ch === " ") delay = 60;
+      window.setTimeout(tick, delay);
+    };
+    const start = window.setTimeout(tick, 350);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(start);
+    };
+  }, [text, reduced]);
+  const typed = text.slice(0, count);
   return (
-    <span aria-label={text} className="inline">
-      <span aria-hidden className="motion-reduce:contents">
-        {words.map((w, i) =>
-          /^\s+$/.test(w) ? (
-            <span key={i}>{w}</span>
-          ) : (
-            <span
-              key={i}
-              className="inline-block opacity-0 will-change-[transform,opacity] tw-word motion-reduce:opacity-100 motion-reduce:animate-none"
-              style={{ animationDelay: `${schedule[i]}ms` }}
-            >
-              {w}
-            </span>
-          ),
-        )}
+    <span aria-label={text} className="relative inline">
+      {/* invisible full-string spacer prevents layout reflow */}
+      <span aria-hidden className="invisible">
+        {text}
       </span>
-      <span
-        aria-hidden
-        className={`caret-smooth ml-2 inline-block h-[0.78em] w-[2px] translate-y-[0.06em] rounded-[1px] bg-current align-baseline opacity-70 transition-opacity duration-500 ${done ? "opacity-0" : ""}`}
-      />
+      <span aria-hidden className="absolute inset-0">
+        {typed}
+        <span className="caret-smooth ml-0.5 inline-block translate-y-[-0.02em] font-light text-current">
+          _
+        </span>
+      </span>
     </span>
   );
 }
@@ -186,7 +180,7 @@ function Hero() {
           {[
             ["50M+", "Verified reach"],
             ["120+", "Tech creators"],
-            ["6×", "Median adoption lift"],
+            ["3×", "Median adoption lift"],
             ["100%", "Tech-only focus"],
           ].map(([k, v]) => (
             <div key={v} className="bg-background p-5">
