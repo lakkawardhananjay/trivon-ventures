@@ -85,7 +85,7 @@ function Nav() {
 
 function Hero() {
   return (
-    <section id="top" className="relative overflow-hidden pt-40 pb-32 lg:pt-56 lg:pb-44">
+    <section id="top" className="relative overflow-hidden pt-20 pb-32 lg:pt-32 lg:pb-44">
       <div
         aria-hidden
         className="absolute inset-0 -z-10 grain"
